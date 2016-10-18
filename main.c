@@ -30,12 +30,14 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include "blit.h"
 
 #define GREEN 0x00007F00
 #define BLUE 0x007F3F1F
 #define PURPLE 0x007F1F7F
+#define POURC(P)    (floor(P/255*100))
 
 static uint32_t current_buttons = 0, pressed_buttons = 0;
 
@@ -69,6 +71,7 @@ int main_thread(SceSize args, void *argp) {
 	int controller = 0;
 	int vflux = 0;
 	int menu_color = 0;
+	int intensity = 0;
 	char* colors_name[] = {"Yellow", "Red", "Black", "CTP"};
 	uint32_t colors_value[] = {0x0000FFFF, RGB(255,255,255), 0x00FFFFFF,0x007F1F7F};
 
@@ -139,17 +142,15 @@ int main_thread(SceSize args, void *argp) {
 			}
 
 			blit_setup();
-			blit_set_color(RGBT(0,255,0,100),0x00007F00);
+			blit_set_color(RGBA(0,255,0,100),0x00007F00);
 			blit_stringf(336, 128, "vFlux");
 
 			blit_set_color(0x00FFFFFF, menu_sel == 0 ? BLUE : PURPLE);
 			blit_stringf(336, 160, vflux == 1 ? "vFlux  ON" : "vFlux OFF");
 			blit_set_color(0x00FFFFFF, menu_sel == 1 ? BLUE : PURPLE);
-			blit_stringf(336, 176, "Color");
-			blit_stringf(496, 160, colors_name[menu_color]);//Color
+			blit_stringf(336, 176, "Color %s", colors_name[menu_color]);
 			blit_set_color(0x00FFFFFF, menu_sel == 2 ? BLUE : PURPLE);
-			blit_stringf(336, 192, "Intensity");
-			blit_stringf(496, 160, "");//Intensity
+			blit_stringf(336, 192, "Intensity %d",POURC(intensity));//Intensi
 		}
 
 		sceDisplayWaitVblankStart();
