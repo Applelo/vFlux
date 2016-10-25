@@ -33,11 +33,11 @@
 #include <math.h>
 
 #include "blit.h"
+#include "threads.h"
 
 #define GREEN 0x00007F00
 #define BLUE 0x007F3F1F
 #define PURPLE 0x007F1F7F
-#define POURC(P)    (floor(P/255*100))
 
 static uint32_t current_buttons = 0, pressed_buttons = 0;
 
@@ -68,12 +68,10 @@ int main_thread(SceSize args, void *argp) {
 
 	int menu_open = 0;
 	int menu_sel = 0;
-	int controller = 0;
 	int vflux = 0;
 	int menu_color = 0;
-	int intensity = 0;
-	char* colors_name[] = {"Yellow", "Red", "Black", "CTP"};
-	uint32_t colors_value[] = {0x0000FFFF, RGB(255,255,255), 0x00FFFFFF,0x007F1F7F};
+	char* c_name[4] = {"Orange","Red","Black","CTP"};
+	uint32_t c_color[4] = {RGB(255, 102, 0), RGB(255, 0, 0), RGB(0, 0, 0), RGB(40, 19, 70)};
 
 	while (1) {
 		SceCtrlData pad;
@@ -83,20 +81,20 @@ int main_thread(SceSize args, void *argp) {
 		pressed_buttons = pad.buttons & ~current_buttons;
 		current_buttons = pad.buttons;
 
-		if (vflux) {
-
-		}
-
-
+		if (vflux && menu_open == 0)
+			draw_rectangle(0,0,960,544,c_color[menu_color]);
 
 		if (!menu_open && holdButtons(&pad, SCE_CTRL_SELECT, 1 * 1000 * 1000)) {
 			menu_open = 1;
 			menu_sel = 0;
+			pauseMainThread();
 		}
 
 		if (menu_open) {
-			if (pressed_buttons & SCE_CTRL_SELECT)
+			if (pressed_buttons & SCE_CTRL_SELECT) {
 				menu_open = 0;
+				resumeMainThread();
+			}
 
 			if (pressed_buttons & SCE_CTRL_UP) {
 				if (menu_sel > 0)
@@ -104,53 +102,41 @@ int main_thread(SceSize args, void *argp) {
 			}
 
 			if (pressed_buttons & SCE_CTRL_DOWN) {
-				if (menu_sel < 2)
+				if (menu_sel < 1)
 					menu_sel++;
 			}
 
 			if (pressed_buttons & SCE_CTRL_LEFT || pressed_buttons & SCE_CTRL_RIGHT) {
 
 				if (pressed_buttons & SCE_CTRL_LEFT) {
-					controller = 0;
+					if (menu_sel == 1) {
+						menu_color--;
+						if (menu_color < 0)
+							menu_color = 3;
+					}
 				}
 
 				if (pressed_buttons & SCE_CTRL_RIGHT) {
-					controller = 1;
+					if (menu_sel == 1) {
+						menu_color++;
+						if (menu_color > 3)
+							menu_color = 0;
+					}
 				}
 
-				switch (menu_sel) {
-					case 0:
+				if (menu_sel == 0) {
 						vflux = (vflux == 0 ? 1 : 0);
-						break;
-
-					case 1:
-						if (controller == 1 && menu_color >= 3)//Right
-							menu_color = 0;
-						else
-							menu_color++;
-
-						if (controller == 0 && menu_color <= 0)//Left
-							menu_color = 3;
-						else
-							menu_color--;
-						//break;
-
-					//case 2:
-
-//						break;
 				}
 			}
 
 			blit_setup();
-			blit_set_color(RGBA(0,255,0,100),0x00007F00);
+			blit_set_color(RGB(0,255,0),0x00007F00);
 			blit_stringf(336, 128, "vFlux");
 
 			blit_set_color(0x00FFFFFF, menu_sel == 0 ? BLUE : PURPLE);
 			blit_stringf(336, 160, vflux == 1 ? "vFlux  ON" : "vFlux OFF");
 			blit_set_color(0x00FFFFFF, menu_sel == 1 ? BLUE : PURPLE);
-			blit_stringf(336, 176, "Color %s", colors_name[menu_color]);
-			blit_set_color(0x00FFFFFF, menu_sel == 2 ? BLUE : PURPLE);
-			blit_stringf(336, 192, "Intensity %d",POURC(intensity));//Intensi
+			blit_stringf(336, 176, "Color %s", c_name[menu_color]);
 		}
 
 		sceDisplayWaitVblankStart();

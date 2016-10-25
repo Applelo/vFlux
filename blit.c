@@ -68,14 +68,6 @@ int blit_setup(void)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-//blit screen filter
-/////////////////////////////////////////////////////////////////////////////
-void blit_screen_filter(int bg_color);
-	bcolor = bg_col;
-	memset(vram32, bcolor, (bufferwidth*pheight)<<2);
-}
-
-/////////////////////////////////////////////////////////////////////////////
 // blit text
 /////////////////////////////////////////////////////////////////////////////
 void blit_set_color(int fg_col,int bg_col)
@@ -172,4 +164,14 @@ int blit_stringf(int sx, int sy, const char *msg, ...)
 	va_end(list);
 
 	return blit_string(sx, sy, string);
+}
+
+void draw_rectangle(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t color)
+{
+	int i, j;
+	for (i = 0; i < h; i++) {
+		for (j = 0; j < w; j++) {
+			((uint32_t *)vram32)[(x + j) + (y + i)*bufferwidth] = color;
+		}
+	}
 }

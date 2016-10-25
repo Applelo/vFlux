@@ -1,5 +1,5 @@
 TARGET  = vFlux
-OBJS    = main.o blit.o font.o
+OBJS    = main.o blit.o font.o threads.o
 
 LIBS    = -lSceAppMgr_stub -lSceCtrl_stub -lSceDisplay_stub -lSceFios2_stub -lSceKernel_stub -lScePower_stub
 
