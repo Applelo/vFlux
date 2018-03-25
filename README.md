@@ -1,11 +1,12 @@
 # vFlux
 
+Plugin to add color filter.
+
 ## Changelog
 
-### Version 1 - taiHen Version
+### Version 0.5 - taiHen Version
 
-- Now compatible with taiHen : use any where, when you whant (LiveArea, games, homebrews...) 
-
+- Now compatible with taiHen
 
 ### Version 0.1 - Adrenaline epileptic version very limited
 
