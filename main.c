@@ -30,7 +30,7 @@ uint32_t colorByTime(struct rgbColor color) {
 }
 
 
-/*int holdButtons(SceCtrlData *pad, uint32_t buttons, uint64_t time) {
+int holdButtons(SceCtrlData *pad, uint32_t buttons, uint64_t time) {
 	if ((pad->buttons & buttons) == buttons) {
 		uint64_t time_start = sceKernelGetProcessTimeWide();
 
@@ -47,7 +47,7 @@ uint32_t colorByTime(struct rgbColor color) {
 	}
 
 	return 0;
-}*/
+}
 
 static tai_hook_ref_t ref_hook0;
 int  sceDisplaySetFrameBuf_patched(const SceDisplayFrameBuf *pParam, int sync) {
@@ -57,7 +57,7 @@ int  sceDisplaySetFrameBuf_patched(const SceDisplayFrameBuf *pParam, int sync) {
 		draw_rectangle(0, 0, 960, 544, colorByTime(c_color[menu_color]));
 	}
 
-	/*SceCtrlData pad;
+	SceCtrlData pad;
 	sceCtrlPeekBufferPositive(0, &pad, 1);
 	pressed_buttons = pad.buttons & ~current_buttons;
 	current_buttons = pad.buttons;
@@ -111,7 +111,7 @@ int  sceDisplaySetFrameBuf_patched(const SceDisplayFrameBuf *pParam, int sync) {
 		blit_stringf(336, 176, "Color %s", c_name[menu_color]);
 
 
-	}*/
+	}
 
 
 	return TAI_CONTINUE(int, ref_hook0, pParam, sync);
