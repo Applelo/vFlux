@@ -1,5 +1,26 @@
 # vFlux
-Screen filter plugin for PS Vita. But it doesn't work because the plugin capacity are very limited currently.
-If you are epileptic, don't use. Thanks :)
 
-Thanks to The FloW and Rinnegamente ^^
+## Changelog
+
+### Version 1 - taiHen Version
+
+- Now compatible with taiHen : use any where, when you whant (LiveArea, games, homebrews...) 
+
+
+### Version 0.1 - Adrenaline epileptic version very limited
+
+- Initial Release
+
+
+## Build
+Install **VitaSDK** with [**VDPM**](https://github.com/vitasdk/vdpm) and run the followed commands :
+
+```shell
+cmake .
+make
+```
+
+## Credits
+
+* Developped by *Applelo*
+* *Tuxbot123* for the idea
