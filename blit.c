@@ -1,14 +1,6 @@
 /*
 	PSP VSH 24bpp text bliter
 */
-#include <psp2/types.h>
-#include <psp2/display.h>
-
-#include <stdio.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "blit.h"
 
 #define ALPHA_BLEND 1
@@ -46,18 +38,15 @@ static uint32_t adjust_alpha(uint32_t col)
 
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
-//int blit_setup(int sx,int sy,const char *msg,int fg_col,int bg_col)
-int blit_setup(void)
-{
-	SceDisplayFrameBuf param;
-	param.size = sizeof(SceDisplayFrameBuf);
-	sceDisplayGetFrameBuf(&param, SCE_DISPLAY_SETBUF_IMMEDIATE);
 
-	pwidth = param.width;
-	pheight = param.height;
-	vram32 = param.base;
-	bufferwidth = param.pitch;
-	pixelformat = param.pixelformat;
+int blit_set_frame_buf(const SceDisplayFrameBuf *param)
+{
+
+	pwidth = param->width;
+	pheight = param->height;
+	vram32 = param->base;
+	bufferwidth = param->pitch;
+	pixelformat = param->pixelformat;
 
 	if( (bufferwidth==0) || (pixelformat!=0)) return -1;
 
@@ -67,9 +56,6 @@ int blit_setup(void)
 	return 0;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// blit text
-/////////////////////////////////////////////////////////////////////////////
 void blit_set_color(int fg_col,int bg_col)
 {
 	fcolor = fg_col;
@@ -150,7 +136,7 @@ int blit_string(int sx,int sy,const char *msg)
 
 int blit_string_ctr(int sy,const char *msg)
 {
-	int sx = 960/2-strlen(msg)*(16/2);
+	int sx = 960/2 - strlen(msg)*(16/2);
 	return blit_string(sx,sy,msg);
 }
 
@@ -166,12 +152,22 @@ int blit_stringf(int sx, int sy, const char *msg, ...)
 	return blit_string(sx, sy, string);
 }
 
-void draw_rectangle(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t color)
+
+void draw_rectangle(uint32_t  x, uint32_t  y, uint32_t  w, uint32_t h, uint32_t  inColor)
 {
 	int i, j;
+	uint32_t  c1,c2;
+	uint32_t  in_col = adjust_alpha(inColor);
+	uint32_t  alpha = in_col>>24;
 	for (i = 0; i < h; i++) {
 		for (j = 0; j < w; j++) {
-			((uint32_t *)vram32)[(x + j) + (y + i)*bufferwidth] = color;
+			c2 = vram32[(x + j) + (y + i)*bufferwidth];
+			c1 = c2 & 0x00ff00ff;
+			c2 = c2 & 0x0000ff00;
+			c1 = ((c1*alpha)>>8)&0x00ff00ff;
+			c2 = ((c2*alpha)>>8)&0x0000ff00;
+			uint32_t  color = (in_col&0xffffff) + c1 + c2;
+			((int *)vram32)[(x + j) + (y + i)*bufferwidth] = color;
 		}
 	}
 }
