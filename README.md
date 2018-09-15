@@ -4,9 +4,18 @@ Plugin to add color filter.
 
 ## How to use it
 
-Install like other plugin. Write in file _"ux0:tai/config.txt"_ : `ux0:tai/vFlux.suprx`
 
-Open/close vFlux menu with L + Select
+**Works only on applications/games (need to specify Title ID)! Not in KERNEL and main configurations.**
+
+Install like other plugin. Write in  _"ux0:tai/config.txt"_ the title id of your app or game like and add the plugin path: 
+
+```
+*PCSF10006
+ux0:tai/vFlux.suprx
+```
+
+
+Open/close vFlux menu with L + Select in your game.
 
 Use directional arrow to choose options :
 - Activate/desactivate vFlux
